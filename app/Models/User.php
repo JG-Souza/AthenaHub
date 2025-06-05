@@ -6,14 +6,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Define os campos que podem ser preenchidos em massa
      *
      * @var list<string>
      */
@@ -21,10 +22,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'role',
+        'cpf',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Atributos ocultos nas respostas JSON.
      *
      * @var list<string>
      */
@@ -34,7 +38,10 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * Converte atributos automaticamente, como datas e senhas.
+     *
+     * 'email_verified_at' vira um objeto Carbon.
+     * 'password' é armazenado de forma segura (hash).
      *
      * @return array<string, string>
      */
@@ -44,5 +51,23 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Relacionamentos.
+     */
+    public function modules()
+    {
+        return $this->hasMany(Module::class); // Criar o model Module
+    }
+
+    public function grades()
+    {
+        return $this->hasMany(Grade::class); // Criar o model Grade
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class); // Criar o model Enrollment
     }
 }
