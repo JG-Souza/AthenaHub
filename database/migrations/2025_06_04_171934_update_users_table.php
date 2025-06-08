@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('phone');
-            $table->enum('role', ['student', 'teacher', 'admin']);
+            $table->enum('role', ['student', 'teacher', 'admin'])->default('student');
             $table->string('cpf');
         });
     }
