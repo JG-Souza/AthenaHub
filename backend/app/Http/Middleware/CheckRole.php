@@ -16,6 +16,11 @@ class CheckRole
     public function handle(Request $request, Closure $next, $roles): Response
     {
         $user = $request->user();
+        if (!$user) {
+            return response()->json([
+                'message' => 'Usuário não autenticado'
+            ], 401);
+        }
 
         $roles = explode(',', $roles); // A variável roles chega como string, o método explode transforma em array
 

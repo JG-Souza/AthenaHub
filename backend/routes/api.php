@@ -15,6 +15,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::post('/store', [UserController::class, 'store']);
     Route::delete('/destroy/{id}', [UserController::class, 'destroy']);
 });
-Route::get('/index', [UserController::class, 'index']);
-Route::put('/update/{id}', [UserController::class, 'update']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/index', [UserController::class, 'index']);
+    Route::put('/update/{id}', [UserController::class, 'update']);
+});
 

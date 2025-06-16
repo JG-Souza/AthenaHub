@@ -13,7 +13,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        if (auth()->user()->role === 'admin'){
+        $user = auth()->user();
+        if ($user->role === 'admin'){
             return UserResource::collection(User::all());
         }
 
