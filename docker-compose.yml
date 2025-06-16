@@ -1,0 +1,53 @@
+version: "3.8"
+
+services: # Cada bloxo identado é um container diferente
+  backend:
+    build:
+      context: ./backend
+    container_name: athena_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: athena_hub
+      DB_USERNAME: root
+      DB_PASSWORD:
+    working_dir: /var/www
+    command: > # Tenho que testar se o migrate realmente vai dar certo
+      sh -c "
+        if [ ! -f .env ]; then cp .env.example .env; fi &&
+        composer install &&
+        php artisan key:generate &&
+        php artisan migrate &&
+        php artisan serve --host=0.0.0.0 --port=8000
+      "
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: athena_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    command: npm run dev
+
+  db:
+    image: mysql:8.0
+    container_name: athena_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_DATABASE: athena_hub
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
